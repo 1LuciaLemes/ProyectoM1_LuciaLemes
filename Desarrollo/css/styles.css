@@ -1,9 +1,11 @@
-.color-container{
+#color-container{
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
+}
+
+.color-container {
     width: 100px;
     height: 100px;
-    border-radius: 2px;
-    border-color: brown;
+    border-radius: 5px;
 }

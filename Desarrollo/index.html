@@ -12,18 +12,18 @@
         <section>
             <h2>Tipo de color</h2>
             <ul>
-                <li>RGB</li>
-                <li>HSL</li>
+                <li><input type="checkbox" id="rgbColors"><label for="rgbColors">RGB</label></li>
+                <li><input type="checkbox" id="hslColors"><label for="hslColors">HSL</label></li>
             </ul>
             <h2>Cantidad de colores</h2>
             <ul>
-                <li>6</li>
-                <li>8</li>
-                <li>9</li>
+                <li><input type="checkbox" id="sixColors"><label for="sixColors">6</label></li>
+                <li><input type="checkbox" id="eightColors"><label for="eightColors">8</label></li>
+                <li><input type="checkbox" id="nineColors"><label for="nineColors">9</label></li>
             </ul>
             <button type="button" id="generateColors">Generar Colores</button>
         </section>
-        <section id="colorContainer"></section>
+        <section id="color-container" class="color-container"></section>
     </main>
     <script src="js/scripts.js"></script>
 </body>
