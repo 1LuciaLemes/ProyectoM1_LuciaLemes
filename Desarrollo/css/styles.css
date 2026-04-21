@@ -1,11 +1,10 @@
 #color-container{
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
     gap: 10px;
 }
 
 .color-container {
     width: 100px;
     height: 100px;
-    border-radius: 5px;
 }
