@@ -8,3 +8,10 @@
     width: 100px;
     height: 100px;
 }
+
+.hex-code {
+    color: black;
+    font-size: 12px;
+    text-align: center;
+    text-transform: uppercase;
+}
