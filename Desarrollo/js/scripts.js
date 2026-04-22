@@ -193,5 +193,10 @@ generateColor.addEventListener("click", function() {
         console.log ("color generado");
         colorContainer.appendChild(div);
         console.log("contenedor creado");
+
+        const p = document.createElement("p");
+        p.textContent = color;
+        p.classList.add("hex-code");
+        div.appendChild(p);
     }
 });
