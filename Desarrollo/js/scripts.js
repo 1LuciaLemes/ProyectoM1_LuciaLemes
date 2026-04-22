@@ -1,12 +1,3 @@
-//funcion para generar colores aleatorios
-function getRandomColorRGBA() {
-    let red = Math.floor(Math.random() * 256);
-    let green = Math.floor(Math.random() * 256);
-    let blue = Math.floor(Math.random() * 256);
-    let alpha = Math.random().toFixed(2);
-    return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
-}
-
 //función para generar colores aleatorios
 function getRandomColorRGBA() {
     let red = Math.floor(Math.random() * 256);
@@ -17,16 +8,16 @@ function getRandomColorRGBA() {
 }
 
 function getRandomColorHSL() {
-    let hue = Math.floor(Math.random() * 361);  // Hue entre 0 y 360
-    let saturation = Math.floor(Math.random() * 101);  // Saturación entre 0 y 100%
-    let lightness = Math.floor(Math.random() * 101);  // Luminosidad entre 0 y 100%
+    let hue = Math.floor(Math.random() * 361);
+    let saturation = Math.floor(Math.random() * 101);
+    let lightness = Math.floor(Math.random() * 101);
     return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
 }
 
 // Convertir HSL a HEX
 function hslToHex(hsl) {
-    const regex = /hsl\((\d+), (\d+)%?, (\d+)%?\)/;
-    const match = hsl.match(regex);
+    const regex = /hsl\((\d+), (\d+)%?, (\d+)%?\)/; //expresión regular para verificar el formato HSL, y extraer los valores de h, s, y l.
+    const match = hsl.match(regex); //verifica si la cadena de texto coincide con el formato HSL y extrae los valores de h, s y l.
 
     if (match) {
         let h = parseInt(match[1]);
@@ -71,8 +62,8 @@ function hslToHex(hsl) {
 
 //Convertir RGBA a HEX
 function rgbaToHex (rgba) {
-    const rgbaRegex = /^rgba\((\d+), (\d+), (\d+), [0-1](?:\.\d+)?\)$/;
-    const match = rgba.match(rgbaRegex);
+    const rgbaRegex = /^rgba\((\d+), (\d+), (\d+), [0-1](?:\.\d+)?\)$/; //análogo a HSL, pero para RGBA
+    const match = rgba.match(rgbaRegex); //análogo a HSL, verifica si coindice y extrae los datos de rojo, verde, azul y alfa.
 
     if (match) {
         const r = parseInt(match[1]);
@@ -87,7 +78,7 @@ function rgbaToHex (rgba) {
     };
 }
 
-//dependencia del tipo y cantidad de colores
+//constantes para referenciar a los elementos que contienen tipo y cantidad de color
 const rgbaColors = document.querySelector("#rgbaColors");
 const hslColors = document.querySelector("#hslColors");
 
@@ -151,7 +142,7 @@ generateColor.addEventListener("click", function() {
         alert("Por favor, seleccione el tipo de color a generar.");
     };
     
-    //determinar tope de cantidad de colores a generar
+    //determinar cantidad de colores a generar
     if (sixColors.checked) {
         numColors = 6;
         console.log("cantidad de colores : 6");
@@ -183,20 +174,23 @@ generateColor.addEventListener("click", function() {
             rgbaColors.checked = false; //desmarcar la casilla de RGBA si se selecciona HSL
         }
 
-        const div = document.createElement("div");
-        div.classList.add("color-container");
+        const divColor = document.createElement("div");//creo el divColor para almacenar el color aleatoreo
+        divColor.classList.add("color-container");
 
-        div.style.backgroundColor = color;
-        div.style.borderRadius = "5px";
-        div.style.border = "2px solid brown";
-        // div.style.transform = "rotate(40deg)";
+        divColor.style.backgroundColor = color;
+        divColor.style.borderRadius = "5px";
+        divColor.style.border = "2px solid brown";
+        // divColor.style.transform = "rotate(40deg)";
         console.log ("color generado");
-        colorContainer.appendChild(div);
         console.log("contenedor creado");
 
-        const p = document.createElement("p");
+        const p = document.createElement("p");//creo el elemento p para mostrar el código HEX del color generado.
         p.textContent = color;
         p.classList.add("hex-code");
-        div.appendChild(p);
+
+        const colorItemContainer = document.createElement("div");//creo un contenedor para cada color, que contenga el divColor y el HEX de ese color.
+        colorItemContainer.appendChild(divColor);
+        colorItemContainer.appendChild(p);
+        colorContainer.appendChild(colorItemContainer);
     }
 });
