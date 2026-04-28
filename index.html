@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="Desarrollo/css/styles.css">
+    <title>proyecto-integrador-1</title>
+</head>
+<body>
+    <header>
+        <h1>ColorFly Studio</h1>
+        <p class="secondary-text">Selecciona el tipo y cantidad de colores que deseas generar.</p>
+    </header>
+    <main>
+       <div class = "page-container">
+            <section class = "options-container">
+                <h2>Tipo de color</h2>
+                <ul>
+                    <li>
+                        <input type="checkbox" id="rgbaColors">
+                        <label for="rgbaColors" class = "checkbox">RGBA</label>
+                    </li>
+                    <li>
+                        <input type="checkbox" id="hslColors">
+                        <label for="hslColors" class = "checkbox">HSL</label>
+                    </li>
+                </ul>
+
+                <h2>Cantidad de colores</h2>
+                <ul>
+                    <li>
+                        <input type="checkbox" id="sixColors">
+                        <label for="sixColors" class = "checkbox">6</label>
+                    </li>
+                    <li>
+                        <input type="checkbox" id="eightColors">
+                        <label for="eightColors" class = "checkbox">8</label>
+                    </li>
+                    <li>
+                        <input type="checkbox" id="nineColors">
+                        <label for="nineColors" class = "checkbox">9</label>
+                    </li>
+                </ul>
+
+                <button type="button" id="generateColors" class = "generate-colors">Generar Colores</button>
+                <div id="toast" class="toast"></div>
+            </section>
+            
+            <div class = "color-display-container">
+                <section id="color-container" class="color-container "></section>
+            </div>
+        </div>
+    </main>
+</div>
+
+    <script src="Desarrollo/js/scripts.js"></script>
+</body>
+</html>
