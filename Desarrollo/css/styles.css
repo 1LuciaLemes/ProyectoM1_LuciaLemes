@@ -2,7 +2,7 @@
 
 @font-face {
     font-family: 'MiTipografia';
-    src: url(https://github.com/1LuciaLemes/ProyectoM1_LuciaLemes/blob/main/Desarrollo/fonts/Rolling%20Cake.otf);
+    src: url('../fonts/Rolling\ Cake.otf');
     font-weight: normal;
     font-style: normal;
 }
@@ -15,7 +15,7 @@
 
 /* Reiniciar los márgenes y rellenos por defecto en el body */
 body {
-    background-image: url(https://github.com/1LuciaLemes/ProyectoM1_LuciaLemes/blob/main/Desarrollo/img/fondo.jpg);
+    background-image: url('../img/fondo.jpg');
     background-repeat: no-repeat;
     background-position: left;
     background-size: 85rem;
@@ -230,7 +230,7 @@ li {
     width: 1.2rem;
     height: 1.2rem;
     background-color: transparent;
-    background-image: url('https://github.com/1LuciaLemes/ProyectoM1_LuciaLemes/blob/main/Desarrollo/iconos/copiar.png');
+    background-image: url(../iconos/copiar.png);
     background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
@@ -260,7 +260,7 @@ li {
     width: 1.2rem;
     height: 1.2rem;
     background-color: transparent;
-    background-image: url(https://github.com/1LuciaLemes/ProyectoM1_LuciaLemes/blob/main/Desarrollo/iconos/candado-abierto.png);
+    background-image: url('../iconos/candado-abierto.png');
     background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
@@ -272,7 +272,7 @@ li {
     width: 1.2rem;
     height: 1.2rem;
     background-color: transparent;
-    background-image: url(https://github.com/1LuciaLemes/ProyectoM1_LuciaLemes/blob/main/Desarrollo/iconos/cerrar-con-llave.png);
+    background-image: url('../iconos/cerrar-con-llave.png');
     background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
@@ -329,4 +329,10 @@ li {
     background-color: rgb(30, 110, 214);
     border: none;
     color: white;
+}
+
+footer {
+    font-size: 0.8rem;
+    font-family: 'Times New Roman', Times, serif;
+    text-align: center;
 }
