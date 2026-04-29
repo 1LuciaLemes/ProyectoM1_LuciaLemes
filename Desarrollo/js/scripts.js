@@ -1,6 +1,21 @@
 const rootStyles = getComputedStyle(document.documentElement);
 const boxShadowValue = rootStyles.getPropertyValue('--box-shadow');
 
+// --- Selección de elementos del DOM de manera compacta ---
+const elementos = {
+    rgbaColors: "#rgbaColors",
+    hslColors: "#hslColors",
+    sixColors: "#sixColors",
+    eightColors: "#eightColors",
+    nineColors: "#nineColors",
+    generateColor: "#generateColors"
+};
+
+// Asignación de los elementos del DOM a las variables correspondientes
+for (let key in elementos) {
+    window[key] = document.querySelector(elementos[key]);
+}
+
 //-- Funciones para generar colores aleatorios --
 function getRandomColorRGBA() {
     let red = Math.floor(Math.random() * 256);
@@ -79,39 +94,13 @@ function rgbaToHex (rgba) {
     };
 }
 
-//--- Funciones auxiliares para copiar/ bloquear color y copiar paleta ---
-// function colorCopy {
-    
-// }
-
-// function colorBlock {
-
-// }
-
-// function paletcopy {
-
-// }
-
-// --- Selección de elementos del DOM de manera compacta ---
-const elementos = {
-    rgbaColors: "#rgbaColors",
-    hslColors: "#hslColors",
-    sixColors: "#sixColors",
-    eightColors: "#eightColors",
-    nineColors: "#nineColors",
-    generateColor: "#generateColors"
-};
-
-// Asignación de los elementos del DOM a las variables correspondientes
-for (let key in elementos) {
-    window[key] = document.querySelector(elementos[key]);
-}
-
-//-- Eentos para seleccionar tipo y cantidad de colores --
+//-- Eventos para seleccionar tipo y cantidad de colores --
 rgbaColors.addEventListener("change", function() {
     if(rgbaColors.checked) {
         hslColors.checked = false; //desmarca la casilla de HSL si se selecciona RGBA
         generateColors.classList.remove("active");
+    } else {
+        rgbaColors.checked = true;
     }
 });
 
@@ -119,6 +108,8 @@ hslColors.addEventListener("change", function() {
     if(hslColors.checked) {
         rgbaColors.checked = false; //desmaraca la casilla de RGBA si se selecciona HSL
         generateColors.classList.remove("active");
+    } else {
+        hslColors.checked = true;
     }
 });
 
@@ -127,6 +118,8 @@ sixColors.addEventListener("change",function(){
         eightColors.checked = false;
         nineColors.checked = false;
         generateColors.classList.remove("active");
+    } else {
+        sixColors.checked = true;
     }
 });
 
@@ -135,6 +128,8 @@ eightColors.addEventListener("change",function(){
         sixColors.checked = false;
         nineColors.checked = false;
         generateColors.classList.remove("active");
+    } else {
+        eightColors.checked = true;
     }
 });
 
@@ -143,6 +138,8 @@ nineColors.addEventListener("change",function(){
         sixColors.checked = false;
         eightColors.checked = false;
         generateColors.classList.remove("active");
+    } else {
+        nineColors.checked = true;
     }
 });
 
@@ -175,8 +172,8 @@ function createColorBlock(color) {
     // Crear bloque inferior (botones + HEX)
     const bottomBlock = document.createElement("div");
     bottomBlock.classList.add("color-info-block");
-    bottomBlock.appendChild(buttonsContainer);
     bottomBlock.appendChild(p);
+    bottomBlock.appendChild(buttonsContainer);
 
     // Crear un contenedor para el color (div + bloque inferior)
     const colorItemContainer = document.createElement("div");
@@ -184,83 +181,121 @@ function createColorBlock(color) {
     colorItemContainer.appendChild(divColor);
     colorItemContainer.appendChild(bottomBlock);
 
+
     return colorItemContainer; // Retorna el bloque de color completo
 }
 
-// -- Evento boton "generar colores" --
+let isGenerating = false;
+
 generateColor.addEventListener("click", function() {
-    let color; //Variable para almacenar el color generado
-    let numColors; //Variable para almacenar la cantidad de colores a generar
-
+    if (isGenerating) return; // Si ya hice click una vez, no se superpone la creación
+    isGenerating = true;
+    
     const colorContainer = document.querySelector("#color-container");
-
+    const bloqueados = JSON.parse(localStorage.getItem('bloqueados')) || []; // Obtener colores bloqueados
+    const currentColors = Array.from(colorContainer.querySelectorAll('.color-item')); // Obtener colores actuales
+    const currentColorCount = currentColors.length;
+    
+    let numColors;
+    let color; // Variable para almacenar el color generado
+    
     // Eliminar clases previas para cambiar la cantidad de columnas
     colorContainer.classList.remove("six-colors", "eight-colors");
-
-    if (!rgbaColors.checked && !hslColors.checked) {
-        sixColors.checked = false;
-        eightColors.checked = false;
-        nineColors.checked = false;
-        return;
-    }
-
     // Determinar la cantidad de colores a generar
     if (sixColors.checked) {
         numColors = 6;
-        console.log("cantidad de colores: 6");
         colorContainer.classList.add("six-colors");
     } else if (eightColors.checked) {
         numColors = 8;
-        console.log("cantidad de colores: 8");
         colorContainer.classList.add("eight-colors");
     } else if (nineColors.checked) {
         numColors = 9;
-        console.log("cantidad de colores: 9");
     } else {
         return;
     }
 
-    // Elimino todos los hijos del contenedor en caso de que existan
-    while (colorContainer.firstChild) {
-        colorContainer.removeChild(colorContainer.firstChild);
-    }
+    // Si el número de colores a generar es menor que el actual, eliminamos los colores fuera del rango
+    if (numColors < currentColorCount) {
+        let toRemove = currentColorCount - numColors;
 
-    // Si se seleccionan 6 o 8 colores, centramos los bloques
-    if (numColors === 6 || numColors === 8) {
-        colorContainer.classList.add("centered");
-    }
+        // Eliminar los colores fuera del rango, incluso si están bloqueados
+        for (let i = currentColors.length - 1; i >= numColors && toRemove > 0; i--) {
+            const colorItem = currentColors[i];
+            const colorHex = colorItem.querySelector('.hex-code').textContent;
 
-    // Función para agregar bloques con retraso
-    function addBlockWithDelay() {
-        // Iteramos por el número de colores
-        for (let i = 0; i < numColors; i++) {
-            // Determinar tipo de color a generar
-            if (rgbaColors.checked) {
-                color = getRandomColorRGBA();
-                color = rgbaToHex(color);
-                console.log("Color RGBA generado: " + color);
-                console.log("Tipo de color seleccionado: RGBA");
-                hslColors.checked = false; //Desmarcar la casilla de HSL si se selecciona RGBA
-            } else {
-                color = getRandomColorHSL();
-                color = hslToHex(color);
-                console.log("Color HSL generado: " + color);
-                console.log("Tipo de color seleccionado: HSL");
-                rgbaColors.checked = false; //Desmarcar la casilla de RGBA si se selecciona HSL
-            }
-
-            // Crear el bloque para este color
-            const colorBlock = createColorBlock(color);
-
-            // Agregar el bloque con retraso
-            setTimeout(() => {
-                colorContainer.appendChild(colorBlock);
-            }, i * 300);  // Retraso progresivo: 300ms, 600ms, 900ms++
+            colorItem.remove();
+            toRemove--;
         }
     }
 
-    // Llamar a la función que agrega los bloques con retraso
-    addBlockWithDelay();
+    // Si necesitamos agregar más colores
+    if (numColors > currentColorCount) {
+        let toAdd = numColors - currentColorCount;
+
+        for (let i = 0; i < toAdd; i++) {
+            if (rgbaColors.checked) {
+                color = getRandomColorRGBA();
+                color = rgbaToHex(color);
+                hslColors.checked = false; // Desmarcar la casilla de HSL si se selecciona RGBA
+            } else {
+                color = getRandomColorHSL();
+                color = hslToHex(color);
+                rgbaColors.checked = false; // Desmarcar la casilla de RGBA si se selecciona HSL
+            }
+
+            // Crear el bloque de color
+            const colorBlock = createColorBlock(color);
+
+            // Si el color está bloqueado, lo agregamos al principio
+            if (bloqueados.includes(color)) {
+                colorContainer.insertBefore(colorBlock, colorContainer.firstChild); // Insertar al principio
+            } else {
+                colorContainer.appendChild(colorBlock); // Agregar al final
+            }
+        }
+    }
+
+    // Actualización de los bloques existentes (solo los no bloqueados)
+    currentColors.forEach((colorItem, index) => {
+        const colorHex = colorItem.querySelector('.hex-code').textContent;
+
+        // Si no está bloqueado, generamos un nuevo color aleatorio
+        if (!bloqueados.includes(colorHex)) {
+            let newColor;
+            if (rgbaColors.checked) {
+                newColor = getRandomColorRGBA();
+                newColor = rgbaToHex(newColor);
+            } else {
+                newColor = getRandomColorHSL();
+                newColor = hslToHex(newColor);
+            }
+
+            colorItem.querySelector('.color-container').style.backgroundColor = newColor;
+            colorItem.querySelector('.hex-code').textContent = newColor; // Actualizar el código HEX
+        }
+    });
+
+    // Retraso para cada nuevo color
+    let delay = 0;
+
+    // Función con retraso para añadir colores
+    function addColorWithDelay(colorBlock, delay) {
+        setTimeout(() => {
+            colorContainer.appendChild(colorBlock);
+        }, delay); // Retraso progresivo entre colores
+    }
+
+    // Añadir los bloques generados con retraso
+    const colorItems = colorContainer.querySelectorAll('.color-item');
+    colorItems.forEach((colorItem, index) => {
+        delay += 80;
+        addColorWithDelay(colorItem, delay);
+    });
+
+    // Al finalizar la generación de colores reseteo el evento "click"
+    setTimeout(() => {
+        isGenerating = false;
+    }, 100); // Después de que se hayan generado todos los colores, reseteo el evento
 
     generateColor.classList.add("active");
 });
@@ -297,7 +332,37 @@ function mostrarRetroalimentacion() {
     toast.style.display = 'block';
 }
 
-// Usamos event delegation para manejar los clics en los checkboxes dentro de la sección "options-container"
+//--- Funciones auxiliares para copiar/ bloquear color y copiar paleta en localstorage ---
+//Copiar color
+document.querySelector("#color-container").addEventListener("click", function(event) {
+    if (event.target && event.target.classList.contains("btn-copy")) {
+        // Encuentra el p más cercano al botón "copiar"
+        const p = event.target.closest(".color-info-block").querySelector("p");
+        const colorHex = p.textContent; // Obtener el color del p
+
+        // Crear el toast
+        const copyToast = document.createElement("div");
+        copyToast.classList.add("copy-toast");
+        copyToast.textContent = "¡Copiado!";
+
+        // Coloca el texto emergente sobre el botón
+        const button = event.target;
+        button.appendChild(copyToast); // Añadir el toast al botón
+
+        // Hacer visible el toast
+        copyToast.style.display = "block";
+
+        // Eliminar el toast después de 2 segundos
+        setTimeout(() => {
+            copyToast.remove();
+        }, 500);
+
+        localStorage.setItem("copiedValue", colorHex);
+    }
+});
+
+
+// Usamos event delegation para manejar los clicks en los checkboxes dentro de la sección "options-container"
 document.querySelector('.options-container').addEventListener('change', function(event) {
 // Verificar si el elemento clickeado es un checkbox
 if (event.target && event.target.type === 'checkbox') {
@@ -305,18 +370,147 @@ if (event.target && event.target.type === 'checkbox') {
 }
 });
 
-//-- Colores RGBA aleatorios cada vez que cargo la página --
+// -- Función para bloquear y desbloquear colores -- 
+function bloquearColor(event) {
+    const colorItem = event.target.closest('.color-item'); // Obtengo el contenedor del color
+    const colorHex = colorItem.querySelector('.hex-code').textContent; // Obtengo el color HEX
+    const btnPadlock = event.target;
+
+    // Verificar si el color está bloqueado en el localStorage
+    let bloqueados = JSON.parse(localStorage.getItem('bloqueados')) || [];
+
+    if (btnPadlock.classList.contains('btn-padlock')) {
+        // Cambiar imagen a "candado cerrado"
+        btnPadlock.classList.remove('btn-padlock');
+        btnPadlock.classList.add('btn-locked');
+        bloqueados.push(colorHex); // Bloquear el color
+        colorItem.classList.add('color-locked');
+    } else {
+        // Cambiar imagen a "candado abierto"
+        btnPadlock.classList.remove('btn-locked');
+        btnPadlock.classList.add('btn-padlock');
+        bloqueados = bloqueados.filter(color => color !== colorHex); // Desbloquear el color
+        colorItem.classList.remove('color-locked');
+    }
+
+    // Guardar el estado de los colores bloqueados en el localStorage
+    localStorage.setItem('bloqueados', JSON.stringify(bloqueados));
+}
+
+// -- Evento de click para bloquear/desbloquear colores -- 
+document.querySelector('#color-container').addEventListener('click', function(event) {
+    if (event.target && event.target.classList.contains('btn-padlock') || event.target.classList.contains('btn-locked')) {
+        bloquearColor(event);
+
+        // Verificar si ya hay un toast de "bloqueado" visible y eliminarlo si es necesario
+        const existingLockedToast = document.querySelector(".locked-toast");
+        if (existingLockedToast) {
+            existingLockedToast.remove(); // Eliminar el toast anterior
+        }
+
+        // Crear el toast
+        const lockedToast = document.createElement("div");
+        lockedToast.classList.add("locked-toast");
+        
+        const button = event.target;
+        button.appendChild(lockedToast);
+        
+        lockedToast.style.display = "block";
+        
+        if (event.target.classList.contains('btn-locked')){
+            lockedToast.textContent = "¡Bloqueado!";
+        } else {
+            lockedToast.textContent = "¡Desbloqueado!";
+        }
+
+        setTimeout(() => {
+            lockedToast.remove();
+        }, 500);
+    }
+});
+
+// -- Función para verificar si un color está bloqueado -- 
+function verificarColoresBloqueados() {
+    const bloqueados = JSON.parse(localStorage.getItem('bloqueados')) || []; // Obtener colores bloqueados
+    const colorItems = document.querySelectorAll('.color-item'); // Obtener todos los divs de colores
+
+    // Iteramos sobre todos los colores
+    colorItems.forEach(colorItem => {
+        const colorHex = colorItem.querySelector('.hex-code').textContent;
+        const btnPadlock = colorItem.querySelector('.btn-padlock');
+
+        // Si el color está bloqueado, cambiamos el estado del candado
+        if (bloqueados.includes(colorHex)) {
+            btnPadlock.classList.remove('btn-padlock');
+            btnPadlock.classList.add('btn-locked'); // Mostrar candado cerrado
+        }
+    });
+}
+
+// -- Llamada para verificar colores bloqueados al cargar la página -- 
+document.addEventListener('DOMContentLoaded', verificarColoresBloqueados);
+
+// Copiar toda la paleta de colores y mostrar miniaturas
+document.querySelector("#btn-copy-all").addEventListener("click", function() {
+    // Obtener todos los elementos de color en el contenedor de colores
+    const colorItems = document.querySelectorAll("#color-container .color-item");
+
+    // Crear un array para almacenar los colores
+    const colorHexArray = [];
+
+    // Recorrer todos los elementos de color y obtener su código HEX
+    colorItems.forEach((colorItem) => {
+        const colorHex = colorItem.querySelector('.hex-code').textContent;
+        colorHexArray.push(colorHex); // Agregar cada color al array
+    });
+
+    // Verificar si ya existe un "toast" visible y eliminarlo
+    const existingCopyPaletToast = document.querySelector(".copy-toast");
+    if (existingCopyPaletToast) {
+        existingCopyPaletToast.remove(); // Eliminar el toast anterior si existe
+    }
+
+    // Crear el texto emergente (toast) para indicar que la paleta fue copiada
+    const copyPaletToast = document.createElement("div");
+    copyPaletToast.classList.add("copy-toast"); // Agregar la clase al toast
+    copyPaletToast.textContent = "¡Paleta copiada!"; // Mensaje que aparecerá
+
+    // Coloca el toast sobre el botón
+    const button = document.querySelector("#btn-copy-all");
+    button.appendChild(copyPaletToast);
+    copyPaletToast.style.display = "block";
+    setTimeout(() => {
+        copyPaletToast.remove();
+    }, 500);
+
+    // Guardar la paleta de colores completa en el localStorage (como un string JSON)
+    localStorage.setItem("copiedPalette", JSON.stringify(colorHexArray));
+});
+
+// -- Colores RGBA aleatorios cada vez que carga la página --
 document.addEventListener('DOMContentLoaded', () => {
-    nineColors.checked = true;
+    isGenerating = true;
+    const colorContainer0 = document.querySelector("#color-container");
+
+    eightColors.checked = true;
     rgbaColors.checked = true;
     mostrarRetroalimentacion();
-    
-    for (let i = 0; i < 9; i++) {
+
+    colorContainer0.classList.add("eight-colors");
+
+    for (let i = 0; i < 8; i++) {
         let color0 = getRandomColorRGBA();
         color0 = rgbaToHex(color0);
-        const colorContainer0 = document.querySelector("#color-container");
-        
+
+        // Crear el bloque de color
         const colorBlock = createColorBlock(color0);
-        colorContainer0.appendChild(colorBlock);
+
+        setTimeout(() => {
+            colorContainer0.appendChild(colorBlock);
+        }, i * 100);
     }
+
+    setTimeout(() => {
+        isGenerating = false;
+    }, 8 * 100);
 });
